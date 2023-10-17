@@ -1,8 +1,9 @@
 import * as functions from 'firebase-functions';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import * as express from 'express';
+import { LogingInterceptor } from './loging/loging.interceptor';
 
 const server = express();
 
@@ -11,7 +12,7 @@ const createNestServer = async (expressInstance) => {
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-    
+  app.useGlobalInterceptors(new LogingInterceptor());
   return app.init();
 };
 
