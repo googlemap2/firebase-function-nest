@@ -4,8 +4,9 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import * as express from 'express';
 import { LogingInterceptor } from './loging/loging.interceptor';
-
 const server = express();
+import * as fs from 'fs';
+import * as path from 'path';
 
 const createNestServer = async (expressInstance) => {
   const app = await NestFactory.create(
