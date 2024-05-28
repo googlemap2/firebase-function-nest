@@ -7,6 +7,7 @@ import { LogingInterceptor } from './loging/loging.interceptor';
 const server = express();
 import * as fs from 'fs';
 import * as path from 'path';
+import { asyncLocalStorageMiddleware } from './helper/async-hook';
 
 const createNestServer = async (expressInstance) => {
   const app = await NestFactory.create(
