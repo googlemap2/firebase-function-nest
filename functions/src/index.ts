@@ -13,7 +13,9 @@ const createNestServer = async (expressInstance) => {
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-  app.useGlobalInterceptors(new LogingInterceptor());
+  app.useGlobalInterceptors(new LogingInterceptor()); 
+   app.use(asyncLocalStorageMiddleware);
+
   return app.init();
 };
 
