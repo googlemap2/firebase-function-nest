@@ -1,23 +1,23 @@
-import * as functions from 'firebase-functions';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import * as admin from "firebase-admin";
+
+import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import * as express from 'express';
-import { LogingInterceptor } from './loging/loging.interceptor';
+import { onRequest } from 'firebase-functions/v2/https';
+import * as express from 'serverless-express/express'
+import { asyncLocalStorageMiddleware } from "./helper/async-hook";
 const server = express();
-import * as fs from 'fs';
-import * as path from 'path';
-import { asyncLocalStorageMiddleware } from './helper/async-hook';
+
+admin.initializeApp()
 
 const createNestServer = async (expressInstance) => {
   const app = await NestFactory.create(
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-  app.useGlobalInterceptors(new LogingInterceptor()); 
-   app.use(asyncLocalStorageMiddleware);
+  app.use(asyncLocalStorageMiddleware)
+  return await app.init();
 
-  return app.init();
 };
 
 
@@ -25,4 +25,6 @@ createNestServer(server)
   .then(v => console.log('Nest Ready'))
   .catch(err => console.error('Nest broken', err));
 
-export const api = functions.https.onRequest(server);
+export const api = onRequest(async (req, res) => {
+  return server(req, res)
+});
